@@ -138,9 +138,9 @@ const config: ExpoConfig = {
         android: {
           // Android 10 is API level 29; older Android releases will not install this APK.
           minSdkVersion: 29,
-          buildArchs: ["armeabi-v7a", "arm64-v8a"],
-          enableMinifyInReleaseBuilds: true,
-          enableShrinkResourcesInReleaseBuilds: true,
+          buildArchs: ["arm64-v8a"],
+          enableMinifyInReleaseBuilds: false,
+          enableShrinkResourcesInReleaseBuilds: false,
           enableBundleCompression: true,
           useLegacyPackaging: true,
         },
