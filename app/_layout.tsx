@@ -38,8 +38,6 @@ function ThemedRoot() {
   useEffect(() => {
     I18nManager.allowRTL(true);
     I18nManager.forceRTL(true);
-    const rtlManager = I18nManager as typeof I18nManager & { swapLeftAndRightInRTL?: (swap: boolean) => void };
-    rtlManager.swapLeftAndRightInRTL?.(false);
   }, []);
   return (
     <MessengerProvider>
